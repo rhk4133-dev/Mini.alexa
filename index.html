@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Mini Voice Assistant</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Voice AI</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Mini Voice AI</h1>
+<div id="loginSection"></div>
 
+<div class="container" id="chatContainer" style="display:none;">
+    <h1>Mini Voice AI</h1>
     <div id="chatBox"></div>
 
     <div class="controls">
@@ -19,6 +21,54 @@
         <button id="voiceBtn">🎤</button>
     </div>
 </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "PASTE_YOURS",
+  authDomain: "PASTE_YOURS",
+  projectId: "PASTE_YOURS",
+  storageBucket: "PASTE_YOURS",
+  messagingSenderId: "PASTE_YOURS",
+  appId: "PASTE_YOURS"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+window.login = function() {
+    signInWithPopup(auth, provider);
+}
+
+window.logout = function() {
+    signOut(auth);
+}
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        document.getElementById("loginSection").innerHTML =
+        `<p style="color:white;text-align:center;">
+            Welcome ${user.displayName}
+         </p>
+         <div style="text-align:center;">
+            <button onclick="logout()">Logout</button>
+         </div>`;
+
+        document.getElementById("chatContainer").style.display = "flex";
+    } else {
+        document.getElementById("loginSection").innerHTML =
+        `<div style="text-align:center;margin-top:40vh;">
+            <button onclick="login()">Login with Google</button>
+         </div>`;
+
+        document.getElementById("chatContainer").style.display = "none";
+    }
+});
+</script>
 
 <script src="script.js"></script>
 </body>
